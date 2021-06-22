@@ -13,7 +13,6 @@ players.dropna(inplace=True)
 #drop_columns = players[(players['Nazwisko'] == 'nan') | (players['Nazwisko'] == 'http://www.sigames.com/')].index
 
 players = players.drop(players[(players['Nazwisko'] == 'NaN') | (players['Nazwisko'] == 'http://www.sigames.com/')].index)
-print(players)
 
 #export column names rename to match skills from list
 
@@ -180,8 +179,12 @@ selected_columns = players[['Nazwisko', 'GK', 'BPD', 'IWB', 'DM', 'W', 'CM', 'SS
 GK_columns = players[['Nazwisko', 'GK']]
 BPD_columns = players[['Nazwisko', 'BPD']]
 IWB_columns = players[['Nazwisko', 'IWB', 'Preferowana noga']]
+IWB_L_columns = IWB_columns.drop(IWB_columns[(IWB_columns['Preferowana noga'] == 'Tylko lewa') | (IWB_columns['Preferowana noga'] == 'Lewa')].index)
+IWB_R_columns = IWB_columns.drop(IWB_columns[(IWB_columns['Preferowana noga'] == 'Tylko prawa') | (IWB_columns['Preferowana noga'] == 'Prawa')].index)
 DM_columns = players[['Nazwisko', 'DM']]
 W_columns = players[['Nazwisko', 'W', 'Preferowana noga']]
+W_R_columns = W_columns.drop(W_columns[(W_columns['Preferowana noga'] == 'Tylko lewa') | (W_columns['Preferowana noga'] == 'Lewa')].index)
+W_L_columns = W_columns.drop(W_columns[(W_columns['Preferowana noga'] == 'Tylko prawa') | (W_columns['Preferowana noga'] == 'Prawa')].index)
 CM_columns = players[['Nazwisko', 'CM']]
 SS_columns = players[['Nazwisko', 'SS']]
 
@@ -196,12 +199,22 @@ BPD.sort_values(by='BPD', inplace=True, ascending=False)
 
 IWB = IWB_columns.copy()
 IWB.sort_values(by='IWB', inplace=True, ascending=False)
+IWB_R = IWB_R_columns.copy()
+IWB_R.sort_values(by='IWB', inplace=True, ascending=False)
+IWB_L = IWB_L_columns.copy()
+IWB_L.sort_values(by='IWB', inplace=True, ascending=False)
 
 DM = DM_columns.copy()
 DM.sort_values(by='DM', inplace=True, ascending=False)
 
 W = W_columns.copy()
 W.sort_values(by='W', inplace=True, ascending=False)
+
+W_R = W_R_columns.copy()
+W_R.sort_values(by='W', inplace=True, ascending=False)
+
+W_L = W_L_columns.copy()
+W_L.sort_values(by='W', inplace=True, ascending=False)
 
 CM = CM_columns.copy()
 CM.sort_values(by='CM', inplace=True, ascending=False)
@@ -216,7 +229,11 @@ with ExcelWriter('Squad Analysis.xlsx') as writer:
     GK.to_excel(writer, sheet_name='Goalkeepers', index=False)
     BPD.to_excel(writer, sheet_name='Ball Playing Defenders', index=False)
     IWB.to_excel(writer, sheet_name='Inverted Wing Backs', index=False)
+    IWB_R.to_excel(writer, sheet_name='Right IWBs', index=False)
+    IWB_L.to_excel(writer, sheet_name='Left IWBs', index=False)
     DM.to_excel(writer, sheet_name='Defensive Midfielders', index=False)
     W.to_excel(writer, sheet_name='Wingers', index=False)
+    W_R.to_excel(writer, sheet_name='Right Wingers', index=False)
+    W_L.to_excel(writer, sheet_name='Left Wingers', index=False)
     CM.to_excel(writer, sheet_name='Central Midfilders', index=False)
     SS.to_excel(writer, sheet_name='Shadow Strikers', index=False)
