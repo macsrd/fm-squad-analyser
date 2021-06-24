@@ -2,16 +2,17 @@ import pandas as pd
 from tkinter import filedialog
 import time
 
-#filename =  filedialog.askopenfilename(initialdir = r"D:\Dokumenty\Sports Interactive\Football Manager 2021",title = "Select file",filetypes = (("xlsx files","*.xlsx"),("all files","*.*")))
+#opening export file from Squad View
+###filename =  filedialog.askopenfilename(initialdir = r"D:\Dokumenty\Sports Interactive\Football Manager 2021",title = "Select file",filetypes = (("xlsx files","*.xlsx"),("all files","*.*")))
 players = pd.read_excel('Export 2.xlsx', index_col=None, header=0)
+
+#opening file with positional attributes
 atr = pd.read_excel('attributes.xlsx')
 
+#removing nan and sigames hyprlink from dataframe (cleaning input data)
 nan_value = float("NaN")
 players.replace("", nan_value, inplace=True)
 players.dropna(inplace=True)
-
-#drop_columns = players[(players['Nazwisko'] == 'nan') | (players['Nazwisko'] == 'http://www.sigames.com/')].index
-
 players = players.drop(players[(players['Nazwisko'] == 'NaN') | (players['Nazwisko'] == 'http://www.sigames.com/')].index)
 
 #export column names rename to match skills from list
@@ -26,6 +27,7 @@ players.rename(columns={'Agr': 'Agresja', 'Bły': 'Błyskotliwość', 'Chw': 'Ch
                         'Sko': 'Skoczność', 'NSp': 'Sprawność', 'Str': 'Strzały z dystansu', 'Szb': 'Szybkość', 'Tec': 'Technika', 
                         'Ust': 'Ustawianie się', 'Wal': 'Waleczność', 'Wsp': 'Współpraca', 'WPK': 'Wychodzi poza pole karne (Tendencja)', 
                         'Wyk': 'Wykańczanie akcji', 'Wkp': 'Wykopy', 'Rzu': 'Wyrzuty', 'Wyt': 'Wytrzymałość', 'ZWy': 'Zasięg wyskoku', 'Zwi': 'Zwinność'}, inplace=True)
+
 
 ## Skills calculation functions 
 def gk_analysis():
