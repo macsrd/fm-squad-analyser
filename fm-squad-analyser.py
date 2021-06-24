@@ -9,25 +9,15 @@ players = pd.read_excel('Export 2.xlsx', index_col=None, header=0)
 #opening file with positional attributes
 atr = pd.read_excel('attributes.xlsx')
 
-#removing nan and sigames hyprlink from dataframe (cleaning input data)
-nan_value = float("NaN")
-players.replace("", nan_value, inplace=True)
+#Opening file with renamed columns
+renamed = pd.read_excel('rename.xlsx')
+
+#removing nan and sigames hyperlink from dataframe (cleaning input data)
 players.dropna(inplace=True)
 players = players.drop(players[(players['Nazwisko'] == 'NaN') | (players['Nazwisko'] == 'http://www.sigames.com/')].index)
 
-#export column names rename to match skills from list
-
-players.rename(columns={'Agr': 'Agresja', 'Bły': 'Błyskotliwość', 'Chw': 'Chwytanie', 'Dec': 'Decyzje', 'Det': 'Determinacja', 
-                        'D Wrz': 'Długie wyrzuty', 'Dśr': 'Dośrodkowania', 'Drb': 'Drybling', 'Eks': 'Ekscentryczność', 
-                        'GbP': 'Gra bez piłki', 'Głw': 'Gra głową', 'GnP': 'Gra na przedpolu', '1v1': 'Jeden na jednego', 
-                        'Kom': 'Komunikacja', 'Knc': 'Koncentracja', 'Kry': 'Krycie', 'Odb': 'Odbiór piłki', 'Opa': 'Opanowanie', 
-                        'Pst': 'Piąstkowanie (Tendencja)', 'Pod': 'Podania', 'Pra': 'Pracowitość', 'Przg': 'Przegląd sytuacji', 
-                        'Pwd': 'Przewidywanie', 'PPł': 'Przyjęcie piłki', 'Psp': 'Przyspieszenie', 'Prz': 'Przywództwo', 'Ref': 'Refleks', 
-                        'Rów': 'Równowaga', 'RzK': 'Rzuty karne', 'RzR': 'Rzuty rożne', 'RzW': 'Rzuty wolne', 'Sił': 'Siła', 
-                        'Sko': 'Skoczność', 'NSp': 'Sprawność', 'Str': 'Strzały z dystansu', 'Szb': 'Szybkość', 'Tec': 'Technika', 
-                        'Ust': 'Ustawianie się', 'Wal': 'Waleczność', 'Wsp': 'Współpraca', 'WPK': 'Wychodzi poza pole karne (Tendencja)', 
-                        'Wyk': 'Wykańczanie akcji', 'Wkp': 'Wykopy', 'Rzu': 'Wyrzuty', 'Wyt': 'Wytrzymałość', 'ZWy': 'Zasięg wyskoku', 'Zwi': 'Zwinność'}, inplace=True)
-
+#renaming attributes columns to long name
+players.rename(columns=renamed.set_index('old_name')['new_name'], inplace=True)
 
 ## Skills calculation functions 
 def gk_analysis():
@@ -45,9 +35,11 @@ def gk_analysis():
     GK_3 = [x for x in GK_3 if x != 'nan']
 
     players['GK_1'] = (players[GK_1].sum(axis=1))/(len(GK_1)*20)*100
-    players['GK_2'] = (players[GK_2].sum(axis=1))/(len(GK_2)*20)*100
-    players['GK_3'] = (players[GK_3].sum(axis=1))/(len(GK_3)*20)*100
+    players['GK_2'] = (players[GK_2].sum(axis=1))/(len(GK_2)*20*0.8)*100
+    players['GK_3'] = (players[GK_3].sum(axis=1))/(len(GK_3)*20*0.6)*100
     players['GK'] = ((players['GK_1'] + players['GK_2']*0.8 + players['GK_3']*0.6)/3).round(decimals=2)
+
+
 
 # Calculating Ball Playing Defender skills
 def bpd_analysis():
@@ -65,8 +57,8 @@ def bpd_analysis():
     BPD_3 = [x for x in BPD_3 if x != 'nan']
 
     players['BPD_1'] = (players[BPD_1].sum(axis=1))/(len(BPD_1)*20)*100
-    players['BPD_2'] = (players[BPD_2].sum(axis=1))/(len(BPD_2)*20)*100
-    players['BPD_3'] = (players[BPD_3].sum(axis=1))/(len(BPD_3)*20)*100
+    players['BPD_2'] = (players[BPD_2].sum(axis=1))/(len(BPD_2)*20*0.8)*100
+    players['BPD_3'] = (players[BPD_3].sum(axis=1))/(len(BPD_3)*20*0.6)*100
     players['BPD'] = ((players['BPD_1'] + players['BPD_2']*0.8 + players['BPD_3']*0.6)/3).round(decimals=2)
 
 def iwb_analysis():
@@ -84,8 +76,8 @@ def iwb_analysis():
     IWB_3 = [x for x in IWB_3 if x != 'nan']
 
     players['IWB_1'] = (players[IWB_1].sum(axis=1))/(len(IWB_1)*20)*100
-    players['IWB_2'] = (players[IWB_2].sum(axis=1))/(len(IWB_2)*20)*100
-    players['IWB_3'] = (players[IWB_3].sum(axis=1))/(len(IWB_3)*20)*100
+    players['IWB_2'] = (players[IWB_2].sum(axis=1))/(len(IWB_2)*20*0.8)*100
+    players['IWB_3'] = (players[IWB_3].sum(axis=1))/(len(IWB_3)*20*0.6)*100
     players['IWB'] = ((players['IWB_1'] + players['IWB_2']*0.8 + players['IWB_3']*0.6)/3).round(decimals=2)
 
 # Calculating Defensive Midfielder skills
@@ -104,8 +96,8 @@ def dm_analysis():
     DM_3 = [x for x in DM_3 if x != 'nan']
 
     players['DM_1'] = (players[DM_1].sum(axis=1))/(len(DM_1)*20)*100
-    players['DM_2'] = (players[DM_2].sum(axis=1))/(len(DM_2)*20)*100
-    players['DM_3'] = (players[DM_3].sum(axis=1))/(len(DM_3)*20)*100
+    players['DM_2'] = (players[DM_2].sum(axis=1))/(len(DM_2)*20*0.8)*100
+    players['DM_3'] = (players[DM_3].sum(axis=1))/(len(DM_3)*20*0.6)*100
     players['DM'] = ((players['DM_1'] + players['DM_2']*0.8 + players['DM_3']*0.6)/3).round(decimals=2)
 
 def w_analysis():
@@ -123,8 +115,8 @@ def w_analysis():
     W_3 = [x for x in W_3 if x != 'nan']
 
     players['W_1'] = (players[W_1].sum(axis=1))/(len(W_1)*20)*100
-    players['W_2'] = (players[W_2].sum(axis=1))/(len(W_2)*20)*100
-    players['W_3'] = (players[W_3].sum(axis=1))/(len(W_3)*20)*100
+    players['W_2'] = (players[W_2].sum(axis=1))/(len(W_2)*20*0.8)*100
+    players['W_3'] = (players[W_3].sum(axis=1))/(len(W_3)*20*0.6)*100
     players['W'] = ((players['W_1'] + players['W_2']*0.8 + players['W_3']*0.6)/3).round(decimals=2)
 
 # Calculating Central Midfielder skills
@@ -143,8 +135,8 @@ def cm_analysis():
     CM_3 = [x for x in CM_3 if x != 'nan']
 
     players['CM_1'] = (players[CM_1].sum(axis=1))/(len(CM_1)*20)*100
-    players['CM_2'] = (players[CM_2].sum(axis=1))/(len(CM_2)*20)*100
-    players['CM_3'] = (players[CM_3].sum(axis=1))/(len(CM_3)*20)*100
+    players['CM_2'] = (players[CM_2].sum(axis=1))/(len(CM_2)*20*0.8)*100
+    players['CM_3'] = (players[CM_3].sum(axis=1))/(len(CM_3)*20*0.6)*100
     players['CM'] = ((players['CM_1'] + players['CM_2']*0.8 + players['CM_3']*0.6)/3).round(decimals=2)
 
 def ss_analysis():
@@ -162,21 +154,23 @@ def ss_analysis():
     SS_3 = [x for x in SS_3 if x != 'nan']
 
     players['SS_1'] = (players[SS_1].sum(axis=1))/(len(SS_1)*20)*100
-    players['SS_2'] = (players[SS_2].sum(axis=1))/(len(SS_2)*20)*100
-    players['SS_3'] = (players[SS_3].sum(axis=1))/(len(SS_3)*20)*100
+    players['SS_2'] = (players[SS_2].sum(axis=1))/(len(SS_2)*20*0.8)*100
+    players['SS_3'] = (players[SS_3].sum(axis=1))/(len(SS_3)*20*0.6)*100
     players['SS'] = ((players['SS_1'] + players['SS_2']*0.8 + players['SS_3']*0.6)/3).round(decimals=2)
 
-#Executing functions
-gk_analysis()
-bpd_analysis()
-iwb_analysis()
-dm_analysis()
-w_analysis()
-cm_analysis()
-ss_analysis()
-    
+#Executing position analysis functions
+def analysis_all():
+    gk_analysis()
+    bpd_analysis()
+    iwb_analysis()
+    dm_analysis()
+    w_analysis()
+    cm_analysis()
+    ss_analysis()
 
-## Tutaj objekt/klasę można zrobić
+analysis_all()
+    
+##
 selected_columns = players[['Nazwisko', 'GK', 'BPD', 'IWB', 'DM', 'W', 'CM', 'SS', 'Preferowana noga']]
 GK_columns = players[['Nazwisko', 'GK']]
 BPD_columns = players[['Nazwisko', 'BPD']]
