@@ -19,6 +19,39 @@ players = players.drop(players[(players['Nazwisko'] == 'NaN') | (players['Nazwis
 #renaming attributes columns to long name
 players.rename(columns=renamed.set_index('old_name')['new_name'], inplace=True)
 
+class Calculate():
+    """Kalkulowanie umiejętności w zależności od pozycji"""
+
+    def __init__(self, sk, sk_1, sk_2, sk_3):
+        """Inicjalizacja atrybutów umiejętności (skill)"""
+        self.sk = sk
+        self.sk_1 = sk_1
+        self.sk_2 = sk_2
+        self.sk_3 = sk_3
+
+    def calculate_skill(self):
+        """ Kalkulowanie umiejętności w zależności od pozycji"""
+        self.sk_1 = (atr[self.sk_1].values.tolist())
+        self.sk_1 = [x for x in self.sk_1 if pd.isnull(x) == False]
+        
+        self.sk_2 = (atr[self.sk_2].values.tolist())
+        self.sk_2 = [x for x in self.sk_2 if pd.isnull(x) == False]
+        
+        self.sk_3 = (atr[self.sk_3].values.tolist())
+        self.sk_3 = [x for x in self.sk_3 if pd.isnull(x) == False]
+        
+        players[self.sk_1] = (players[self.sk_1].sum(axis=1))/(len(self.sk_1))*20*100
+        players[self.sk_2] = (players[self.sk_2].sum(axis=1))/(len(self.sk_2))*20*0.8*100
+        players[self.sk_3] = (players[self.sk_3].sum(axis=1))/(len(self.sk_3))*20*0.6*100
+        players[{self.sk}] = ((players[{self.sk_1}] + players[{self.sk_2}]*0.8 + players[{self.sk_3}]*0.6)/3).round(decimals=2)
+
+#gk_analysis = Calculate('GK', 'GK_1', 'GK_2', 'GK_3')
+#gk_analysis.calculate_skill()
+
+def highlight_max(s):
+    is_max = s == s.max()
+    return ['background: green' if cell else '' for cell in is_max]
+
 ## Skills calculation functions 
 def gk_analysis():
     """Calculation of GK skills basing on attributes lists saved in attributes.xlsx file"""
@@ -186,6 +219,7 @@ SS_columns = players[['Nazwisko', 'SS']]
 
 #creating new dataframes for each player position
 analysis = selected_columns.copy()
+analysis = analysis.style.highlight_max(color = 'green', axis = 0)
 
 GK = GK_columns.copy()
 GK.sort_values(by='GK', inplace=True, ascending=False)
@@ -195,8 +229,10 @@ BPD.sort_values(by='BPD', inplace=True, ascending=False)
 
 IWB = IWB_columns.copy()
 IWB.sort_values(by='IWB', inplace=True, ascending=False)
+
 IWB_R = IWB_R_columns.copy()
 IWB_R.sort_values(by='IWB', inplace=True, ascending=False)
+
 IWB_L = IWB_L_columns.copy()
 IWB_L.sort_values(by='IWB', inplace=True, ascending=False)
 
