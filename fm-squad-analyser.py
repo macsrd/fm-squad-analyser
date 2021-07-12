@@ -4,7 +4,7 @@ import time
 
 #opening export file from Squad View
 ###filename =  filedialog.askopenfilename(initialdir = r"D:\Dokumenty\Sports Interactive\Football Manager 2021",title = "Select file",filetypes = (("xlsx files","*.xlsx"),("all files","*.*")))
-players = pd.read_excel('Export 2.xlsx', index_col=None, header=0)
+players = pd.read_excel('Export_Pre_28_29.xlsx', index_col=None, header=0)
 
 #opening file with positional attributes
 atr = pd.read_excel('attributes.xlsx')
@@ -19,6 +19,8 @@ players = players.drop(players[(players['Nazwisko'] == 'NaN') | (players['Nazwis
 #renaming attributes columns to long name
 players.rename(columns=renamed.set_index('old_name')['new_name'], inplace=True)
 
+
+#creating class for calculating skills
 class Calculate():
     """Kalkulowanie umiejętności w zależności od pozycji"""
 
@@ -31,6 +33,10 @@ class Calculate():
 
     def calculate_skill(self):
         """ Kalkulowanie umiejętności w zależności od pozycji"""
+        sk_1_col = self.sk_1
+        sk_2_col = self.sk_2
+        sk_3_col = self.sk_3
+        
         self.sk_1 = (atr[self.sk_1].values.tolist())
         self.sk_1 = [x for x in self.sk_1 if pd.isnull(x) == False]
         
@@ -39,159 +45,46 @@ class Calculate():
         
         self.sk_3 = (atr[self.sk_3].values.tolist())
         self.sk_3 = [x for x in self.sk_3 if pd.isnull(x) == False]
-        
-        players[self.sk_1] = (players[self.sk_1].sum(axis=1))/(len(self.sk_1))*20*100
-        players[self.sk_2] = (players[self.sk_2].sum(axis=1))/(len(self.sk_2))*20*0.8*100
-        players[self.sk_3] = (players[self.sk_3].sum(axis=1))/(len(self.sk_3))*20*0.6*100
-        players[{self.sk}] = ((players[{self.sk_1}] + players[{self.sk_2}]*0.8 + players[{self.sk_3}]*0.6)/3).round(decimals=2)
 
-#gk_analysis = Calculate('GK', 'GK_1', 'GK_2', 'GK_3')
-#gk_analysis.calculate_skill()
+        players[sk_1_col] = (players[self.sk_1].sum(axis=1))/(len(self.sk_1)*20)*100
+        players[sk_2_col] = (players[self.sk_2].sum(axis=1))/(len(self.sk_2)*20)*100
+        players[sk_3_col] = (players[self.sk_3].sum(axis=1))/(len(self.sk_3)*20)*100
+        players[self.sk] = ((players[sk_1_col] + players[sk_2_col]*0.8 + players[sk_3_col]*0.6)/3).round(decimals=2)
 
+#defining position skill calculation functions                                               
+def gk_analysis():
+    GK = Calculate('GK', 'GK_1', 'GK_2', 'GK_3')
+    GK.calculate_skill()
+
+def bpd_analysis():
+    BPD = Calculate('BPD', 'BPD_1', 'BPD_2', 'BPD_3')
+    BPD.calculate_skill()
+
+def iwb_analysis():
+    IWB = Calculate('IWB', 'IWB_1', 'IWB_2', 'IWB_3')
+    IWB.calculate_skill()
+
+def dm_analysis():
+    DM = Calculate('DM', 'DM_1', 'DM_2', 'DM_3')
+    DM.calculate_skill()
+
+def w_analysis():
+    W = Calculate('W', 'W_1', 'W_2', 'W_3')
+    W.calculate_skill()
+
+def cm_analysis():
+    CM = Calculate('CM', 'CM_1', 'CM_2', 'CM_3')
+    CM.calculate_skill()
+
+def ss_analysis():
+    SS = Calculate('SS', 'SS_1', 'SS_2', 'SS_3')
+    SS.calculate_skill()
+    
 def highlight_max(s):
     is_max = s == s.max()
     return ['background: green' if cell else '' for cell in is_max]
 
-## Skills calculation functions 
-def gk_analysis():
-    """Calculation of GK skills basing on attributes lists saved in attributes.xlsx file"""
-    GK_1 = (atr['GK_1'].to_list())
-    GK_1 = [str(x) for x in GK_1]
-    GK_1 = [x for x in GK_1 if x != 'nan']
-
-    GK_2 = (atr['GK_2'].to_list())
-    GK_2 = [str(x) for x in GK_2]
-    GK_2 = [x for x in GK_2 if x != 'nan']
-
-    GK_3 = (atr['GK_3'].to_list())
-    GK_3 = [str(x) for x in GK_3]
-    GK_3 = [x for x in GK_3 if x != 'nan']
-
-    players['GK_1'] = (players[GK_1].sum(axis=1))/(len(GK_1)*20)*100
-    players['GK_2'] = (players[GK_2].sum(axis=1))/(len(GK_2)*20*0.8)*100
-    players['GK_3'] = (players[GK_3].sum(axis=1))/(len(GK_3)*20*0.6)*100
-    players['GK'] = ((players['GK_1'] + players['GK_2']*0.8 + players['GK_3']*0.6)/3).round(decimals=2)
-
-
-
-# Calculating Ball Playing Defender skills
-def bpd_analysis():
-    """Calculation of BPD skills basing on attributes lists saved in attributes.xlsx file"""
-    BPD_1 = (atr['BPD_1'].to_list())
-    BPD_1 = [str(x) for x in BPD_1]
-    BPD_1 = [x for x in BPD_1 if x != 'nan']
-
-    BPD_2 = (atr['BPD_2'].to_list())
-    BPD_2 = [str(x) for x in BPD_2]
-    BPD_2 = [x for x in BPD_2 if x != 'nan']
-
-    BPD_3 = (atr['BPD_3'].to_list())
-    BPD_3 = [str(x) for x in BPD_3]
-    BPD_3 = [x for x in BPD_3 if x != 'nan']
-
-    players['BPD_1'] = (players[BPD_1].sum(axis=1))/(len(BPD_1)*20)*100
-    players['BPD_2'] = (players[BPD_2].sum(axis=1))/(len(BPD_2)*20*0.8)*100
-    players['BPD_3'] = (players[BPD_3].sum(axis=1))/(len(BPD_3)*20*0.6)*100
-    players['BPD'] = ((players['BPD_1'] + players['BPD_2']*0.8 + players['BPD_3']*0.6)/3).round(decimals=2)
-
-def iwb_analysis():
-    """Calculation of IWB skills basing on attributes lists saved in attributes.xlsx file"""
-    IWB_1 = (atr['IWB_1'].to_list())
-    IWB_1 = [str(x) for x in IWB_1]
-    IWB_1 = [x for x in IWB_1 if x != 'nan']
-
-    IWB_2 = (atr['IWB_2'].to_list())
-    IWB_2 = [str(x) for x in IWB_2]
-    IWB_2 = [x for x in IWB_2 if x != 'nan']
-
-    IWB_3 = (atr['IWB_3'].to_list())
-    IWB_3 = [str(x) for x in IWB_3]
-    IWB_3 = [x for x in IWB_3 if x != 'nan']
-
-    players['IWB_1'] = (players[IWB_1].sum(axis=1))/(len(IWB_1)*20)*100
-    players['IWB_2'] = (players[IWB_2].sum(axis=1))/(len(IWB_2)*20*0.8)*100
-    players['IWB_3'] = (players[IWB_3].sum(axis=1))/(len(IWB_3)*20*0.6)*100
-    players['IWB'] = ((players['IWB_1'] + players['IWB_2']*0.8 + players['IWB_3']*0.6)/3).round(decimals=2)
-
-# Calculating Defensive Midfielder skills
-def dm_analysis():
-    """Calculation of DM skills basing on attributes lists saved in attributes.xlsx file"""
-    DM_1 = (atr['DM_1'].to_list())
-    DM_1 = [str(x) for x in DM_1]
-    DM_1 = [x for x in DM_1 if x != 'nan']
-
-    DM_2 = (atr['DM_2'].to_list())
-    DM_2 = [str(x) for x in DM_2]
-    DM_2 = [x for x in DM_2 if x != 'nan']
-
-    DM_3 = (atr['DM_3'].to_list())
-    DM_3 = [str(x) for x in DM_3]
-    DM_3 = [x for x in DM_3 if x != 'nan']
-
-    players['DM_1'] = (players[DM_1].sum(axis=1))/(len(DM_1)*20)*100
-    players['DM_2'] = (players[DM_2].sum(axis=1))/(len(DM_2)*20*0.8)*100
-    players['DM_3'] = (players[DM_3].sum(axis=1))/(len(DM_3)*20*0.6)*100
-    players['DM'] = ((players['DM_1'] + players['DM_2']*0.8 + players['DM_3']*0.6)/3).round(decimals=2)
-
-def w_analysis():
-    """Calculation of Wingers skills basing on attributes lists saved in attributes.xlsx file"""
-    W_1 = (atr['W_1'].to_list())
-    W_1 = [str(x) for x in W_1]
-    W_1 = [x for x in W_1 if x != 'nan']
-
-    W_2 = (atr['W_2'].to_list())
-    W_2 = [str(x) for x in W_2]
-    W_2 = [x for x in W_2 if x != 'nan']
-
-    W_3 = (atr['W_3'].to_list())
-    W_3 = [str(x) for x in W_3]
-    W_3 = [x for x in W_3 if x != 'nan']
-
-    players['W_1'] = (players[W_1].sum(axis=1))/(len(W_1)*20)*100
-    players['W_2'] = (players[W_2].sum(axis=1))/(len(W_2)*20*0.8)*100
-    players['W_3'] = (players[W_3].sum(axis=1))/(len(W_3)*20*0.6)*100
-    players['W'] = ((players['W_1'] + players['W_2']*0.8 + players['W_3']*0.6)/3).round(decimals=2)
-
-# Calculating Central Midfielder skills
-def cm_analysis():
-    """Calculation of CM skills basing on attributes lists saved in attributes.xlsx file"""
-    CM_1 = (atr['CM_1'].to_list())
-    CM_1 = [str(x) for x in CM_1]
-    CM_1 = [x for x in CM_1 if x != 'nan']
-
-    CM_2 = (atr['CM_2'].to_list())
-    CM_2 = [str(x) for x in CM_2]
-    CM_2 = [x for x in CM_2 if x != 'nan']
-
-    CM_3 = (atr['CM_3'].to_list())
-    CM_3 = [str(x) for x in CM_3]
-    CM_3 = [x for x in CM_3 if x != 'nan']
-
-    players['CM_1'] = (players[CM_1].sum(axis=1))/(len(CM_1)*20)*100
-    players['CM_2'] = (players[CM_2].sum(axis=1))/(len(CM_2)*20*0.8)*100
-    players['CM_3'] = (players[CM_3].sum(axis=1))/(len(CM_3)*20*0.6)*100
-    players['CM'] = ((players['CM_1'] + players['CM_2']*0.8 + players['CM_3']*0.6)/3).round(decimals=2)
-
-def ss_analysis():
-    """Calculation of SS skills basing on attributes lists saved in attributes.xlsx file"""
-    SS_1 = (atr['SS_1'].to_list())
-    SS_1 = [str(x) for x in SS_1]
-    SS_1 = [x for x in SS_1 if x != 'nan']
-
-    SS_2 = (atr['SS_2'].to_list())
-    SS_2 = [str(x) for x in SS_2]
-    SS_2 = [x for x in SS_2 if x != 'nan']
-
-    SS_3 = (atr['SS_3'].to_list())
-    SS_3 = [str(x) for x in SS_3]
-    SS_3 = [x for x in SS_3 if x != 'nan']
-
-    players['SS_1'] = (players[SS_1].sum(axis=1))/(len(SS_1)*20)*100
-    players['SS_2'] = (players[SS_2].sum(axis=1))/(len(SS_2)*20*0.8)*100
-    players['SS_3'] = (players[SS_3].sum(axis=1))/(len(SS_3)*20*0.6)*100
-    players['SS'] = ((players['SS_1'] + players['SS_2']*0.8 + players['SS_3']*0.6)/3).round(decimals=2)
-
-#Executing position analysis functions
+#Executing position analysis functions in one function
 def analysis_all():
     gk_analysis()
     bpd_analysis()
