@@ -2,9 +2,14 @@ import pandas as pd
 from tkinter import filedialog
 import time
 
+timestr = time.strftime("%Y%m%d-%H%M%S")
+
 #opening export file from Squad View
 ###filename =  filedialog.askopenfilename(initialdir = r"D:\Dokumenty\Sports Interactive\Football Manager 2021",title = "Select file",filetypes = (("xlsx files","*.xlsx"),("all files","*.*")))
-players = pd.read_excel('Export_Pre_28_29.xlsx', index_col=None, header=0)
+filename = 'Export_Pre_28_29.html'
+players = pd.read_html(filename, index_col=None, header=0, encoding='utf-8')
+players = pd.concat(players)
+
 
 #opening file with positional attributes
 atr = pd.read_excel('attributes.xlsx')
@@ -96,7 +101,6 @@ def analysis_all():
 
 analysis_all()
     
-##
 selected_columns = players[['Nazwisko', 'GK', 'BPD', 'IWB', 'DM', 'W', 'CM', 'SS', 'Preferowana noga']]
 GK_columns = players[['Nazwisko', 'GK']]
 BPD_columns = players[['Nazwisko', 'BPD']]
@@ -149,7 +153,7 @@ SS.sort_values(by='SS', inplace=True, ascending=False)
 
 #saving dataframes into new excel file
 ExcelWriter = pd.ExcelWriter
-with ExcelWriter('Squad Analysis.xlsx') as writer:
+with ExcelWriter('Squad Analysis_' + timestr + '.xlsx') as writer:
     analysis.to_excel(writer, sheet_name='Analysis', index=False)
     GK.to_excel(writer, sheet_name='Goalkeepers', index=False)
     BPD.to_excel(writer, sheet_name='Ball Playing Defenders', index=False)
